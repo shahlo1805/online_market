@@ -8,26 +8,27 @@ import {
   Body,
   Query,
   UseInterceptors,
-  UploadedFile,
   ParseFilePipe,
+  UploadedFiles,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { IProduct } from './interface';
 import { QueryProductDto } from './dto/get-all-products.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { checkFileSizePipe } from 'src/pipes/check-size-file.pipe';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { CheckMultipleFileSizePipe } from 'src/pipes/check-files-size.pipe';
+
 
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FilesInterceptor('images'))
   create(
     @Body() product: IProduct,
-    @UploadedFile(new checkFileSizePipe(12000)) image: Express.Multer.File,
+    @UploadedFiles(new CheckMultipleFileSizePipe(120000000)) images: Express.Multer.File[],
   ) {
-    return this.productService.create(product);
+    return this.productService.create(product, images);
   }
 
   @Get()

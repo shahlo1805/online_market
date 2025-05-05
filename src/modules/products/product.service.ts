@@ -3,10 +3,12 @@ import { IProduct } from './interface';
 import { PostgresService } from 'src/database';
 import { productTableModel } from './model';
 import { QueryProductDto } from './dto/get-all-products.dto';
+import { FsHelper } from 'src/helpers/fs.helper';
+import { ProductUploadHelper } from 'src/helpers/product.fs';
 
 @Injectable()
 export class ProductService implements OnModuleInit {
-  constructor(private readonly pg: PostgresService) {}
+  constructor(private readonly pg: PostgresService, private fs: ProductUploadHelper) {}
 
   async onModuleInit() {
     try {
@@ -17,13 +19,18 @@ export class ProductService implements OnModuleInit {
     }
   }
 
-  async create(product: IProduct) {
-    const { name, count, price, categoryId } = product;
-    const result = await this.pg.query(
-      'INSERT INTO products (name, count, price, category_id) VALUES ($1, $2, $3, $4) RETURNING *',
-      [name, count, price, categoryId],
-    );
+  async create(product: IProduct, images: Express.Multer.File[]) {
 
+    const productImages = (await this.fs.uploadFiles(images));
+
+    
+    const { name, count, price, categoryId } = product;
+  
+    const result = await this.pg.query(
+      'INSERT INTO products (name, count, price, category_id, images_url) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [name, count, price, categoryId, productImages.files],
+    );
+  
     return {
       message: 'success',
       count: result.length,
