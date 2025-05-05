@@ -1,10 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { PostgresService } from 'src/database/db';
+import { orderModel } from './model';
 
 @Injectable()
 export class OrderService {
   constructor(private readonly pg: PostgresService) {}
+
+  async onModuleInit() {
+      try {
+        await this.pg.query(orderModel);
+        console.log('Order table yaratildi');
+      } catch (error) {
+        console.log('Order table yaratishda xatolik');
+      }
+    }
 
   async createOrder(order: CreateOrderDto) {
     const { userId, totalPrice, status } = order;

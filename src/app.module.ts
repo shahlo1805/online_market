@@ -1,6 +1,6 @@
 import { HttpException, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CategoryModule, ProductModule } from './modules';
+import { CategoryModule, orderItemModule, orderModule, ProductModule } from './modules';
 import { authModule} from './modules/users/auth.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './interseptors/logging.interceptors';
@@ -13,6 +13,9 @@ import { HttpExceptionFilter } from './filter';
    CategoryModule,
    ProductModule,
    authModule,
+   orderModule,
+   orderItemModule
+   
 ],
 providers: [
   {

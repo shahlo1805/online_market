@@ -8,4 +8,4 @@ import { PostgresService } from "src/database";
     controllers: [OrderController],
     providers: [OrderService, PostgresService]
 })
-export class productModule {}
+export class orderModule {}
